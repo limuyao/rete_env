@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<style>
+			.node .control input, .node .input-control input {
+			  width: 140px;
+			}
+            .rete-container{
+                width: 700px;
+                height: 400px;
+                border: 1px antiquewhite solid;
+            }
+
+			select, input {
+			  border-radius: 30px;
+			  background-color: white;
+			  padding: 2px 6px;
+			  border: 1px solid #999;
+			  font-size: 110%;
+			  width: 170px;
+			}
+
+			svg.connection { // dirty fix, path coordinates are incorrect with default 1px for some reason
+			  width: 12px;
+			  height: 12px;
+			}
+
+		</style>	
+	</head>
+
+	<body>
+
+        <div class="rete-container">
+		    <div id="rete" class="node-editor"></div>
+        </div>
+
+
+        <script src="./dist/main.js"></script>
+
+	</body>
+</html>
