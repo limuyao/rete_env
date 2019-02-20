@@ -4,10 +4,13 @@ import * as ConnectionPlugin from 'rete-connection-plugin'; // correct
 import VueRenderPlugin from 'rete-vue-render-plugin';
 import AreaPlugin from 'rete-area-plugin';
 
+//import components
+import VueNumControlSingle from '../components/VueNumControlSingle.vue';
 
-var numSocket = new Rete.Socket('Number value');
 
-var VueNumControl = {
+let numSocket = new Rete.Socket('Number value');
+
+let VueNumControl = {
     props: ['readonly', 'emitter', 'ikey', 'getData', 'putData'],
     template: '<input type="number" :readonly="readonly" :value="value" @input="change($event)" @dblclick.stop="" @pointermove.stop=""/>',
     data() {
@@ -29,17 +32,14 @@ var VueNumControl = {
     mounted() {
         this.value = this.getData(this.ikey);
     }
-}
+};
 
 class NumControl extends Rete.Control {
 
     constructor(emitter, key, readonly) {
         super(key);
-        this.component = VueNumControl;
+        this.component = VueNumControlSingle; //instead of VueNumControl
         this.props = { emitter, ikey: key, readonly };
-
-
-        console.log(this);
     }
 
     setValue(val) {
@@ -70,12 +70,12 @@ class AddComponent extends Rete.Component {
     }
 
     builder(node) {
-        var inp1 = new Rete.Input('num1',"Number", numSocket);
-        var inp2 = new Rete.Input('num2', "Number2", numSocket);
-        var out = new Rete.Output('num', "Number", numSocket);
+        let inp1 = new Rete.Input('num1',"Number", numSocket);
+        let inp2 = new Rete.Input('num2', "Number2", numSocket);
+        let out = new Rete.Output('num', "Number", numSocket);
 
-        inp1.addControl(new NumControl(this.editor, 'num1'))
-        inp2.addControl(new NumControl(this.editor, 'num2'))
+        inp1.addControl(new NumControl(this.editor, 'num1'));
+        inp2.addControl(new NumControl(this.editor, 'num2'));
 
         return node
             .addInput(inp1)
@@ -85,9 +85,9 @@ class AddComponent extends Rete.Component {
     }
 
     worker(node, inputs, outputs) {
-        var n1 = inputs['num1'].length?inputs['num1'][0]:node.data.num1;
-        var n2 = inputs['num2'].length?inputs['num2'][0]:node.data.num2;
-        var sum = n1 + n2;
+        let n1 = inputs['num1'].length?inputs['num1'][0]:node.data.num1;
+        let n2 = inputs['num2'].length?inputs['num2'][0]:node.data.num2;
+        let sum = n1 + n2;
 
         this.editor.nodes.find(n => n.id == node.id).controls.get('preview').setValue(sum);
         outputs['num'] = sum;
@@ -95,10 +95,10 @@ class AddComponent extends Rete.Component {
 }
 
 (async () => {
-    var container = document.querySelector('#rete');
-    var components = [new NumComponent(), new AddComponent()];
+    let container = document.querySelector('#rete');
+    let components = [new NumComponent(), new AddComponent()];
 
-    var editor = new Rete.NodeEditor('demo@0.1.0', container);
+    let editor = new Rete.NodeEditor('demo@0.1.0', container);
     editor.use(ConnectionPlugin.default);
     //editor.use(VueRenderPlugin.default); // delete .default
     editor.use(VueRenderPlugin); //correct
@@ -108,16 +108,16 @@ class AddComponent extends Rete.Component {
     //editor.use(CommentPlugin);
     //editor.use(HistoryPlugin);
 
-    var engine = new Rete.Engine('demo@0.1.0');
+    let engine = new Rete.Engine('demo@0.1.0');
 
     components.map(c => {
         editor.register(c);
         engine.register(c);
     });
 
-    var n1 = await components[0].createNode({num: 2});
-    var n2 = await components[0].createNode({num: 0});
-    var add = await components[1].createNode();
+    let n1 = await components[0].createNode({num: 2});
+    let n2 = await components[0].createNode({num: 0});
+    let add = await components[1].createNode();
 
     n1.position = [80, 200];
     n2.position = [80, 400];
